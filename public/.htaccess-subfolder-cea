@@ -1,0 +1,12 @@
+# CEA website — SPA routing (SUBFOLDER deploy: https://yourdomain.com/cea/)
+# HOW TO USE: rename this file to ".htaccess" and place it INSIDE the /cea/
+# folder on your host (next to index.html). Also set "homepage": "/cea" in
+# package.json BEFORE running `yarn build`.
+<IfModule mod_rewrite.c>
+  RewriteEngine On
+  RewriteBase /cea/
+  RewriteRule ^index\.html$ - [L]
+  RewriteCond %{REQUEST_FILENAME} !-f
+  RewriteCond %{REQUEST_FILENAME} !-d
+  RewriteRule . /cea/index.html [L]
+</IfModule>

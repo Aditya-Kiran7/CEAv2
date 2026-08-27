@@ -1,0 +1,119 @@
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400;1,500&family=Manrope:wght@200;300;400;500;600&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --bg: #050508;
+  --pink: #ffd1dc;
+  --glow: #e0e7ff;
+}
+
+html {
+  background: var(--bg);
+}
+
+body {
+  margin: 0;
+  font-family: 'Manrope', ui-sans-serif, system-ui, sans-serif;
+  background: var(--bg);
+  color: #fff;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  overflow-x: hidden;
+}
+
+.font-serif {
+  font-family: 'Cormorant Garamond', Georgia, serif;
+}
+
+::selection {
+  background: rgba(255, 209, 220, 0.25);
+  color: #fff;
+}
+
+::-webkit-scrollbar {
+  width: 6px;
+}
+::-webkit-scrollbar-track {
+  background: #050508;
+}
+::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.14);
+  border-radius: 99px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 209, 220, 0.4);
+}
+
+html.lenis,
+html.lenis body {
+  height: auto;
+}
+.lenis.lenis-smooth {
+  scroll-behavior: auto !important;
+}
+.lenis.lenis-stopped {
+  overflow: hidden;
+}
+
+@keyframes marquee {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-50%);
+  }
+}
+.animate-marquee {
+  animation: marquee 38s linear infinite;
+}
+
+/* ---- map weather cycle (70s, synced) ---- */
+@keyframes map-night {
+  0%, 18% { opacity: 0; }
+  38% { opacity: 0.28; }       /* dusk tint rising */
+  50%, 62% { opacity: 0.62; }  /* full night */
+  82% { opacity: 0.22; }       /* dawn */
+  100% { opacity: 0; }
+}
+.animate-map-night {
+  animation: map-night 70s linear infinite;
+}
+@keyframes map-dusk {
+  0%, 22% { opacity: 0; }
+  40% { opacity: 0.35; }       /* orange dusk wash */
+  55% { opacity: 0; }
+  100% { opacity: 0; }
+}
+.animate-map-dusk {
+  animation: map-dusk 70s linear infinite;
+}
+@keyframes map-lamps {
+  0%, 30% { opacity: 0; }
+  45%, 68% { opacity: 1; }     /* lamps on through the night */
+  85%, 100% { opacity: 0; }
+}
+.animate-map-lamps {
+  animation: map-lamps 70s linear infinite;
+}
+@keyframes lamp-flicker {
+  0%, 100% { opacity: 0.85; }
+  50% { opacity: 1; }
+}
+@keyframes hotspot-pulse {
+  0%, 100% { transform: scale(1); opacity: 0.85; }
+  50% { transform: scale(1.35); opacity: 0.4; }
+}
+.animate-hotspot-pulse {
+  animation: hotspot-pulse 2.4s ease-in-out infinite;
+}
+@keyframes map-drift {
+  0% { transform: scale(1.1) translate(0.4%, 0.3%); }
+  50% { transform: scale(1.13) translate(-0.5%, -0.4%); }
+  100% { transform: scale(1.1) translate(0.4%, 0.3%); }
+}
+.animate-map-drift {
+  animation: map-drift 36s ease-in-out infinite;
+}
