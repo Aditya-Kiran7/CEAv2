@@ -27,6 +27,7 @@ export default function MapPage() {
   const [cloudStage, setCloudStage] = useState("hidden"); // hidden → in → out
   const [rain, setRain] = useState(false);
   const rainRef = useRef(null);
+  const rainAudioRef = useRef(null); // rain sound element
   const navigate = useNavigate();
   const { entered: gateDone } = useAudio();
 
@@ -124,6 +125,34 @@ export default function MapPage() {
     };
   }, []);
 
+  // fade rain sound in/out with rain state
+  useEffect(() => {
+    const audio = rainAudioRef.current;
+    if (!audio) return;
+
+    let raf;
+    const targetVol = rain ? 0.5 : 0; // tweak target volume to taste
+
+    if (rain) {
+      audio.volume = 0;
+      audio.play().catch(() => {}); // ignore autoplay-block errors
+    }
+
+    const step = () => {
+      const diff = targetVol - audio.volume;
+      if (Math.abs(diff) < 0.01) {
+        audio.volume = targetVol;
+        if (!rain) audio.pause();
+        return;
+      }
+      audio.volume += diff * 0.05; // smoothing factor, higher = faster fade
+      raf = requestAnimationFrame(step);
+    };
+    raf = requestAnimationFrame(step);
+
+    return () => cancelAnimationFrame(raf);
+  }, [rain]);
+
   const onMouse = (e) => {
     mx.set((e.clientX / window.innerWidth - 0.5) * -18);
     my.set((e.clientY / window.innerHeight - 0.5) * -12);
@@ -135,6 +164,9 @@ export default function MapPage() {
       className="fixed inset-0 overflow-hidden bg-[#0a0f14]"
       onMouseMove={onMouse}
     >
+      {/* rain ambience */}
+      <audio ref={rainAudioRef} src="/audio/rain.mp3" loop preload="auto" />
+
       {/* the campus map image */}
       <motion.div style={{ x: sx, y: sy }} className="absolute -inset-8">
         <img
