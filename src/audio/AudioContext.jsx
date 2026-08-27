@@ -28,46 +28,13 @@ export const AudioProvider = ({ children }) => {
   const [muted, setMuted] = useState(false);
 
   const startIntro = useCallback(() => {
-    if (introRef.current || bgmRef.current) return;
-    const el = new Audio("/audio/intro.mp3");
-    el.loop = true;
-    el.volume = 0;
-    introRef.current = el;
-    el.play()
-      .then(() => ramp(el, 0.7, 1200))
-      .catch(() => {});
-  }, []);
+  // Intro audio is handled by the video itself.
+  // No separate intro.mp3 is played.
+}, []);
 
   const startBgm = useCallback(() => {
-    if (bgmRef.current) return;
-    const el = new Audio(BGM_SOURCES[0]);
-    el.loop = true;
-    el.volume = 0;
-    let tried = 0;
-    el.addEventListener("error", () => {
-      tried += 1;
-      if (tried < BGM_SOURCES.length) {
-        el.src = BGM_SOURCES[tried];
-        el.play().catch(() => {});
-      }
-    });
-    bgmRef.current = el;
-    el.play()
-      .then(() => ramp(el, 0.7, 1800))
-      .catch(() => {
-        const resume = () => {
-          el.play()
-            .then(() => ramp(el, 0.7, 1200))
-            .catch(() => {});
-          ["pointerdown", "wheel", "keydown", "touchstart"].forEach((ev) =>
-            window.removeEventListener(ev, resume)
-          );
-        };
-        ["pointerdown", "wheel", "keydown", "touchstart"].forEach((ev) =>
-          window.addEventListener(ev, resume, { passive: true })
-        );
-      });
-  }, []);
+  // Map BGM disabled.
+}, []);
 
   const enter = useCallback(() => {
     if (introRef.current) {
