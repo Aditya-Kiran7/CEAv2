@@ -15,7 +15,7 @@ const AUTO_HOLD_SECONDS = 3; // hold time before autoplay locks in
 const RING_C = 213.6; // hold ring circumference
 
 // Custom intro video
-const VIDEO_SRC = "/intro/hold-intro.mp4";
+const VIDEO_SRC = "/cea/intro/hold-intro.mp4";
 
 export const EnterGate = () => {
   const navigate = useNavigate();

@@ -165,12 +165,12 @@ export default function MapPage() {
       onMouseMove={onMouse}
     >
       {/* rain ambience */}
-      <audio ref={rainAudioRef} src="/audio/rain.mp3" loop preload="auto" />
+      <audio ref={rainAudioRef} src="/cea/audio/rain.mp3" loop preload="auto" />
 
       {/* the campus map image */}
       <motion.div style={{ x: sx, y: sy }} className="absolute -inset-8">
         <img
-          src="/map/campus.jpg"
+          src="/cea/map/campus.jpg"
           alt="Aerial map of the campus"
           data-testid="map-image"
           className="animate-map-drift h-full w-full object-cover"
