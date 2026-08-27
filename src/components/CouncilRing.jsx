@@ -105,9 +105,8 @@ export const CouncilRing = ({ members }) => {
         <div
           className="absolute inset-0"
           style={{
-            background: `radial-gradient(ellipse 70% 55% at 50% 50%, ${
-              (allMode ? "#FFD1DC" : group.color)
-            }14 0%, transparent 68%)`,
+            background: `radial-gradient(ellipse 70% 55% at 50% 50%, ${(allMode ? "#FFD1DC" : group.color)
+              }14 0%, transparent 68%)`,
           }}
         />
 
@@ -257,9 +256,8 @@ export const CouncilRing = ({ members }) => {
                         key={m.id}
                         data-testid={`council-ring-card-${i}`}
                         onClick={() => i === active && setBubble(bubble === i ? null : i)}
-                        className={`absolute inset-0 overflow-hidden rounded-lg border bg-white/5 backdrop-blur-md transition-colors duration-300 ${
-                          i === active ? "cursor-pointer" : ""
-                        }`}
+                        className={`absolute inset-0 overflow-hidden rounded-lg border bg-white/5 backdrop-blur-md transition-colors duration-300 ${i === active ? "cursor-pointer" : ""
+                          }`}
                         style={{
                           transform: `rotateY(${i * step}deg) translateZ(${RADIUS}px)`,
                           backfaceVisibility: "hidden",
