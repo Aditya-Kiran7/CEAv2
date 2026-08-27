@@ -1,11 +1,12 @@
 import { useEffect, useRef, useState } from "react";
-import { motion, AnimatePresence, useMotionValue } from "framer-motion";
+import { motion, AnimatePresence, useMotionValue, useSpring } from "framer-motion";
 import { Hand, Play } from "lucide-react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { useAudio } from "../audio/AudioContext";
 
+
 const DURATION = 2400; // load countdown
-const HOLD_SECONDS = 8; // fallback hold time if the video has no duration yet
+const HOLD_SECONDS = 5; // fallback hold time if the video has no duration yet
 const RING_C = 213.6; // hold ring circumference
 
 // Drop your custom intro clip here to swap it in — no code change needed:
@@ -13,35 +14,82 @@ const RING_C = 213.6; // hold ring circumference
 const VIDEO_SRC = "/intro/hold-intro.mp4";
 
 export const EnterGate = () => {
-  const { entered, enter, startIntro } = useAudio();
   const navigate = useNavigate();
   const location = useLocation();
+
+  // ⚠️ assumed shape — confirm this matches your AudioContext
+  const { entered, startIntro, enter } = useAudio();
+  
+
   const [count, setCount] = useState(99);
   const [phase, setPhase] = useState("load");
   const [progress, setProgress] = useState(0);
   const [holding, setHolding] = useState(false);
   const videoRef = useRef(null);
+
+  // custom cursor position during the hold phase
   const cx = useMotionValue(-100);
   const cy = useMotionValue(-100);
 
-  // land on the map after the intro (only when starting from home)
-  const finishRef = useRef(() => {});
-  finishRef.current = () => {
-    const path = location.pathname.replace(/\/+$/, "") || "/";
-    if (path === "/" || path === "/cea") navigate("/map");
-    enter();
+  // parallax drift for the video itself, smoothed with a spring
+  const videoX = useMotionValue(0);
+  const videoY = useMotionValue(0);
+  const videoSmoothX = useSpring(videoX, { stiffness: 40, damping: 18 });
+  const videoSmoothY = useSpring(videoY, { stiffness: 40, damping: 18 });
+  const videoOpacityRaw = useMotionValue(1);
+  const videoOpacity = useSpring(videoOpacityRaw, { stiffness: 60, damping: 20 });
+  const fadeRaf = useRef(null);
+
+  // ramps a video's volume smoothly between two values, cancels any prior fade
+  const fadeVolume = (video, from, to, duration, onDone) => {
+    if (!video) return;
+    if (fadeRaf.current) cancelAnimationFrame(fadeRaf.current);
+    const start = performance.now();
+    video.volume = from;
+    const step = (t) => {
+      const k = Math.min(1, (t - start) / duration);
+      video.volume = from + (to - from) * k;
+      if (k < 1) {
+        fadeRaf.current = requestAnimationFrame(step);
+      } else {
+        fadeRaf.current = null;
+        onDone?.();
+      }
+    };
+    fadeRaf.current = requestAnimationFrame(step);
   };
 
-  // custom cursor position during the hold phase
+  // land on the map after the intro (only when starting from home)
+    const finishRef = useRef(() => {});
+  finishRef.current = () => {
+    const vid = videoRef.current;
+    fadeVolume(vid, vid?.volume ?? 0, 0, 500);
+        videoOpacityRaw.set(0); // videoOpacity is a spring-free motion value; animate it below instead
+
+    const path = location.pathname.replace(/\/+$/, "") || "/";
+    setTimeout(() => {
+      if (path === "/" || path === "/cea") navigate("/map");
+      enter();
+    }, 500);
+  };
+
+  // cursor tracking + video parallax during the hold phase
   useEffect(() => {
     if (phase !== "hold") return;
+    const STRENGTH = 18; // px of max video drift — tune to taste
+
     const m = (e) => {
       cx.set(e.clientX);
       cy.set(e.clientY);
+
+      const relX = e.clientX / window.innerWidth - 0.5; // -0.5 to 0.5
+      const relY = e.clientY / window.innerHeight - 0.5;
+      videoX.set(relX * STRENGTH * 2);
+      videoY.set(relY * STRENGTH * 2);
     };
     window.addEventListener("mousemove", m);
     return () => window.removeEventListener("mousemove", m);
-  }, [phase, cx, cy]);
+  }, [phase, cx, cy, videoX, videoY]);
 
   // load countdown
   useEffect(() => {
@@ -75,12 +123,19 @@ export const EnterGate = () => {
       holdState.v = true;
       setHolding(true);
       startIntro();
-      videoRef.current?.play?.().catch(() => {});
+      const vid = videoRef.current;
+      if (vid) {
+        vid.play?.().catch(() => {});
+        fadeVolume(vid, vid.volume, 1, 260);
+      }
     };
     const onUp = () => {
       holdState.v = false;
       setHolding(false);
-      videoRef.current?.pause?.();
+      const vid = videoRef.current;
+      if (vid) {
+        fadeVolume(vid, vid.volume, 0, 350, () => vid.pause?.());
+      }
     };
 
     window.addEventListener("pointerdown", onDown);
@@ -185,11 +240,11 @@ export const EnterGate = () => {
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ duration: 0.7 }}
-              className="absolute inset-0 touch-none"
+              className="absolute inset-0 touch-none overflow-hidden"
               style={{ cursor: "none" }}
             >
-              {/* Custom intro video — plays while held */}
-              <video
+              {/* Custom intro video — plays while held, drifts slightly with the cursor */}
+              <motion.video
                 ref={videoRef}
                 data-testid="hold-video"
                 src={VIDEO_SRC}
@@ -197,7 +252,16 @@ export const EnterGate = () => {
                 playsInline
                 preload="auto"
                 className="absolute inset-0 h-full w-full object-cover"
-                style={{ filter: holding ? "none" : "brightness(0.55) saturate(0.9)" }}
+                animate={{
+                  filter: holding ? "brightness(1) saturate(1)" : "brightness(0.55) saturate(0.9)",
+                }}
+                transition={{ duration: 0.45, ease: [0.16, 1, 0.3, 1] }}
+                style={{
+                  x: videoSmoothX,
+                  y: videoSmoothY,
+                  scale: 1.08,
+                  opacity: videoOpacity,
+                }}
               />
 
               {/* custom cursor */}

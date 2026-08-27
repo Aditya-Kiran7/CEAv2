@@ -6,6 +6,11 @@ const RADIUS = 620;
 const CARD_W = 210;
 const CARD_H = 300;
 
+// Tune these to control total scroll length.
+const RING_VH_PER_MEMBER = 90;  // scroll "dwell time" per card in a ring
+const RING_VH_MIN = 300;        // floor so small rings aren't rushed
+const FINALE_VH = 150;          // finale isn't scroll-animated, just needs to "arrive"
+
 // Sequential orbit rings. Sizes are easy to edit; the last ring takes the rest.
 // Ring 1 = HOD + faculty (4), Ring 2 = office bearers (5), Ring 3 = remaining members.
 const RING_DEFS = [
@@ -28,7 +33,19 @@ export const CouncilRing = ({ members }) => {
     return out.filter((r) => r.members.length > 0);
   }, [members]);
 
-  const phases = rings.length + 1; // + a final "all together" finale
+  // Per-phase scroll budget: one entry per ring (scaled by member count), plus the finale.
+  const phaseHeights = useMemo(
+    () => [
+      ...rings.map((r) => Math.max(RING_VH_MIN, r.members.length * RING_VH_PER_MEMBER)),
+      FINALE_VH,
+    ],
+    [rings]
+  );
+  const totalVh = useMemo(
+    () => phaseHeights.reduce((a, b) => a + b, 0),
+    [phaseHeights]
+  );
+
   const { scrollYProgress } = useScroll({ target: ref, offset: ["start start", "end end"] });
 
   const [phase, setPhase] = useState(0);
@@ -38,11 +55,21 @@ export const CouncilRing = ({ members }) => {
   const phaseRef = useRef(0);
 
   useMotionValueEvent(scrollYProgress, "change", (v) => {
-    const seg = 1 / phases;
-    let pi = Math.floor(v / seg);
-    if (pi < 0) pi = 0;
-    if (pi > phases - 1) pi = phases - 1;
-    const local = Math.min(1, Math.max(0, (v - pi * seg) / seg));
+    const posVh = v * totalVh;
+
+    // Walk cumulative phase boundaries (phases are no longer equal-length).
+    let cum = 0;
+    let pi = 0;
+    let local = 0;
+    for (let i = 0; i < phaseHeights.length; i++) {
+      const h = phaseHeights[i];
+      if (posVh < cum + h || i === phaseHeights.length - 1) {
+        pi = i;
+        local = h > 0 ? Math.min(1, Math.max(0, (posVh - cum) / h)) : 1;
+        break;
+      }
+      cum += h;
+    }
 
     if (pi !== phaseRef.current) {
       phaseRef.current = pi;
@@ -53,7 +80,7 @@ export const CouncilRing = ({ members }) => {
     if (pi < rings.length) {
       const n = rings[pi].members.length;
       const step = 360 / n;
-      const rotVal = local * (360 - step);
+      const rotVal = local * (360 + 2 * step);
       const idx = ((Math.round(-rotVal / step) % n) + n) % n;
       setRot(rotVal);
       setActive(idx);
@@ -72,7 +99,7 @@ export const CouncilRing = ({ members }) => {
       ref={ref}
       data-testid="council-ring-section"
       className="relative"
-      style={{ height: `${phases * 135}vh` }}
+      style={{ height: `${totalVh}vh` }}
     >
       <div className="sticky top-0 flex h-screen items-center overflow-hidden">
         <div
