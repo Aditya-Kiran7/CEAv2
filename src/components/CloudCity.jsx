@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { motion, useMotionValue, useSpring } from "framer-motion";
 import { useAudio } from "../audio/AudioContext";
+import { useIsMobile } from "../hooks/useIsMobile";
 
 // hotspot positions are % of the map image (picked on the generated campus)
 const SPOTS = [
@@ -22,9 +23,10 @@ const LAMPS = [
 ];
 
 export default function MapPage() {
+  const isMobile = useIsMobile();
   const [hovered, setHovered] = useState(null);
   const [entered, setEntered] = useState(false);
-  const [cloudStage, setCloudStage] = useState("hidden"); // hidden → in → out
+  
   const [rain, setRain] = useState(false);
   const rainRef = useRef(null);
   const rainAudioRef = useRef(null); // rain sound element
@@ -40,20 +42,12 @@ export default function MapPage() {
   // clouds part only after the intro gate lifts and the site fades in
   useEffect(() => {
     if (!gateDone) return;
-    const t = setTimeout(() => setEntered(true), 2200);
+    const t = setTimeout(() => setEntered(true), 500);
     return () => clearTimeout(t);
   }, [gateDone]);
 
   // clouds billow IN (as the veil lifts), hold, then part
-  useEffect(() => {
-    if (!gateDone) return;
-    const t0 = setTimeout(() => setCloudStage("in"), 700);
-    const t1 = setTimeout(() => setCloudStage("out"), 3600);
-    return () => {
-      clearTimeout(t0);
-      clearTimeout(t1);
-    };
-  }, [gateDone]);
+  
 
   // monsoon scheduler: first drizzle at ~15s, then random episodes
   useEffect(() => {
@@ -127,31 +121,32 @@ export default function MapPage() {
 
   // fade rain sound in/out with rain state
   useEffect(() => {
-    const audio = rainAudioRef.current;
-    if (!audio) return;
+  if (isMobile) return;
+  const audio = rainAudioRef.current;
+  if (!audio) return;
 
-    let raf;
-    const targetVol = rain ? 0.5 : 0; // tweak target volume to taste
+  let raf;
+  const targetVol = rain ? 0.2 : 0;
 
-    if (rain) {
-      audio.volume = 0;
-      audio.play().catch(() => {}); // ignore autoplay-block errors
+  if (rain) {
+    audio.volume = 0;
+    audio.play().catch(() => {});
+  }
+
+  const step = () => {
+    const diff = targetVol - audio.volume;
+    if (Math.abs(diff) < 0.01) {
+      audio.volume = targetVol;
+      if (!rain) audio.pause();
+      return;
     }
-
-    const step = () => {
-      const diff = targetVol - audio.volume;
-      if (Math.abs(diff) < 0.01) {
-        audio.volume = targetVol;
-        if (!rain) audio.pause();
-        return;
-      }
-      audio.volume += diff * 0.05; // smoothing factor, higher = faster fade
-      raf = requestAnimationFrame(step);
-    };
+    audio.volume += diff * 0.05;
     raf = requestAnimationFrame(step);
+  };
+  raf = requestAnimationFrame(step);
 
-    return () => cancelAnimationFrame(raf);
-  }, [rain]);
+  return () => cancelAnimationFrame(raf);
+}, [rain, isMobile]); 
 
   const onMouse = (e) => {
     mx.set((e.clientX / window.innerWidth - 0.5) * -18);
@@ -235,60 +230,48 @@ export default function MapPage() {
       </div>
 
       {/* entry clouds */}
-      <div
-        data-testid="cloud-cover"
-        className="pointer-events-none absolute inset-0"
-        style={{
-          opacity: cloudStage === "in" ? 1 : 0,
-          transform: cloudStage === "in" ? "scale(1.05)" : "scale(1)",
-          transition:
-            cloudStage === "out"
-              ? "opacity 3.4s ease-in-out, transform 3.4s ease-in-out"
-              : "opacity 2s ease-in-out, transform 2.4s ease-in-out",
-          background:
-            "radial-gradient(ellipse 60% 45% at 30% 30%, rgba(255,255,255,0.98), transparent 70%), radial-gradient(ellipse 55% 45% at 72% 62%, rgba(245,248,252,0.98), transparent 70%), radial-gradient(ellipse 70% 60% at 50% 50%, rgba(255,255,255,0.95), rgba(238,242,245,0.9))",
-        }}
-      />
+      
 
       {/* building hotspots — always-on neon name tags, appear as clouds part */}
-      {cloudStage === "out" &&
-        SPOTS.map((L) => (
+      {entered &&
+          SPOTS.map((L) => (
           <button
-            key={L.path}
-            data-testid={`city-label-${L.label.toLowerCase()}`}
-            onClick={() => navigate(L.path)}
-            onMouseEnter={() => setHovered(L.label)}
-            onMouseLeave={() => setHovered(null)}
-            className="group absolute z-10 flex -translate-x-1/2 -translate-y-1/2 items-center justify-center p-4 sm:p-6"
-            style={{ left: `${L.x}%`, top: `${L.y}%` }}
-            aria-label={L.label}
-          >
-            <span
-              className="absolute -inset-4 rounded-full opacity-40 transition-opacity duration-500 group-hover:opacity-100 sm:-inset-6"
-              style={{
-                background: `radial-gradient(circle, ${L.color}8c 0%, ${L.color}47 45%, transparent 70%)`,
-                mixBlendMode: "screen",
-              }}
-            />
-            <span
-              className={`relative max-w-[52vw] truncate whitespace-nowrap rounded-full border px-3.5 py-1.5 text-xs font-semibold uppercase tracking-[0.18em] backdrop-blur-md transition-[transform,border-color,background-color,box-shadow] duration-300 sm:max-w-none sm:px-5 sm:py-2 sm:text-sm sm:tracking-[0.25em] ${hovered === L.label ? "scale-110 bg-black/80" : "bg-black/55"
-                }`}
-              style={{
-                color: "#fff",
-                borderColor: hovered === L.label ? L.color : `${L.color}66`,
-                boxShadow:
-                  hovered === L.label
-                    ? `0 0 20px ${L.color}59, inset 0 0 14px ${L.color}26`
-                    : "none",
-                textShadow:
-                  hovered === L.label
-                    ? `0 0 7px ${L.color}, 0 0 18px ${L.color}, 0 0 36px ${L.color}88`
-                    : `0 0 6px ${L.color}cc, 0 0 14px ${L.color}77`,
-              }}
-            >
-              {L.label}
-            </span>
-          </button>
+      key={L.path}
+      data-testid={`city-label-${L.label.toLowerCase()}`}
+      onClick={() => navigate(L.path)}
+      onMouseEnter={() => setHovered(L.label)}
+      onMouseLeave={() => setHovered(null)}
+      className="group absolute z-10 flex -translate-x-1/2 -translate-y-1/2 items-center justify-center p-4 sm:p-6"
+      style={{ left: `${L.x}%`, top: `${L.y}%` }}
+      aria-label={L.label}
+    >
+      {/* fixed-size square glow, so it's a true circle, not stretched to the label's shape */}
+      <span
+        className="pointer-events-none absolute left-1/2 top-1/2 h-28 w-28 -translate-x-1/2 -translate-y-1/2 rounded-full opacity-30 transition-opacity duration-500 group-hover:opacity-70 sm:h-36 sm:w-36"
+        style={{
+          background:
+            "radial-gradient(circle, rgba(232,236,244,0.55) 0%, rgba(232,236,244,0.22) 45%, transparent 70%)",
+          mixBlendMode: "screen",
+        }}
+      />
+      <span
+        className={`relative max-w-[52vw] truncate whitespace-nowrap rounded-lg px-3.5 py-1.5 text-xs font-semibold uppercase tracking-[0.18em] backdrop-blur-md transition-[transform,background-color,box-shadow] duration-300 sm:max-w-none sm:px-5 sm:py-2 sm:text-sm sm:tracking-[0.25em] ${hovered === L.label ? "scale-110 bg-black/80" : "bg-black/55"
+          }`}
+        style={{
+          color: "#E8ECF4",
+          boxShadow:
+            hovered === L.label
+              ? "0 0 10px rgba(232,236,244,0.35), inset 0 0 6px rgba(232,236,244,0.12)"
+              : "none",
+          textShadow:
+            hovered === L.label
+              ? "0 0 4px rgba(232,236,244,0.9), 0 0 10px rgba(232,236,244,0.6)"
+              : "0 0 3px rgba(232,236,244,0.55), 0 0 8px rgba(232,236,244,0.3)",
+        }}
+      >
+        {L.label}
+      </span>
+    </button>
         ))}
 
       <motion.div

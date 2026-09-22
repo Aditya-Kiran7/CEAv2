@@ -40,7 +40,7 @@ export default function Council() {
                     e.currentTarget.onerror = null;
                     if (m.photoFallback) e.currentTarget.src = m.photoFallback;
                   }}
-                  className="h-full w-full object-cover grayscale transition-[transform,filter] duration-700 ease-out group-hover:scale-105 group-hover:grayscale-0"
+                  className="h-full w-full object-cover transition-transform duration-700 ease-out group-hover:scale-105"
                 />
               </div>
               <p className="mt-4 font-serif text-lg leading-tight text-white">{m.name}</p>

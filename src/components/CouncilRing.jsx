@@ -53,6 +53,8 @@ export const CouncilRing = ({ members }) => {
   const [rot, setRot] = useState(0);
   const [bubble, setBubble] = useState(null);
   const phaseRef = useRef(0);
+  const activeRef = useRef(0);
+  const bubbleOpenRef = useRef(false); // tracks whether a bubble is "pinned" open
 
   useMotionValueEvent(scrollYProgress, "change", (v) => {
     const posVh = v * totalVh;
@@ -75,6 +77,7 @@ export const CouncilRing = ({ members }) => {
       phaseRef.current = pi;
       setPhase(pi);
       setBubble(null);
+      bubbleOpenRef.current = false; // new ring — always start closed
     }
 
     if (pi < rings.length) {
@@ -84,6 +87,13 @@ export const CouncilRing = ({ members }) => {
       const idx = ((Math.round(-rotVal / step) % n) + n) % n;
       setRot(rotVal);
       setActive(idx);
+
+      if (idx !== activeRef.current) {
+        activeRef.current = idx;
+        // if a bubble was open, keep it open but move it to follow the new active member;
+        // if it was closed, leave it closed
+        setBubble(bubbleOpenRef.current ? idx : null);
+      }
     }
   });
 
@@ -112,15 +122,15 @@ export const CouncilRing = ({ members }) => {
 
         {/* ---- left info panel (sequential phases) ---- */}
         {!allMode && (
-          <div className="pointer-events-none absolute inset-x-6 bottom-10 z-20 sm:bottom-auto sm:left-6 sm:top-1/2 sm:max-w-sm sm:-translate-y-1/2 lg:left-12">
-            <div className="flex items-center gap-3">
+          <div className="pointer-events-none absolute inset-x-4 bottom-20 z-20 sm:inset-x-auto sm:bottom-auto sm:left-6 sm:top-1/2 sm:max-w-sm sm:-translate-y-1/2 lg:left-12">
+            <div className="flex items-center gap-2.5 sm:gap-3">
               <span
-                className="inline-block h-2 w-2 rounded-full"
+                className="inline-block h-1.5 w-1.5 rounded-full sm:h-2 sm:w-2"
                 style={{ background: group.color }}
               />
               <p
                 data-testid="council-ring-indicator"
-                className="text-[10px] uppercase tracking-[0.4em]"
+                className="text-[9px] uppercase tracking-[0.3em] sm:text-[10px] sm:tracking-[0.4em]"
                 style={{ color: group.color }}
               >
                 Ring {phase + 1} / {rings.length}
@@ -128,29 +138,29 @@ export const CouncilRing = ({ members }) => {
             </div>
             <p
               data-testid="council-ring-tier"
-              className="mt-3 font-serif text-2xl font-light italic text-white/85"
+              className="mt-2 font-serif text-lg font-light italic text-white/85 sm:mt-3 sm:text-2xl"
             >
               {group.name}
             </p>
-            <p className="mt-4 text-[10px] uppercase tracking-[0.4em] text-white/40">
+            <p className="mt-2 text-[9px] uppercase tracking-[0.3em] text-white/40 sm:mt-4 sm:text-[10px] sm:tracking-[0.4em]">
               {String(active + 1).padStart(2, "0")} / {String(n).padStart(2, "0")}
             </p>
-            <AnimatePresence mode="wait">
+            <AnimatePresence>
               <motion.div
                 key={`${phase}-${active}`}
                 initial={{ opacity: 0, y: 24 }}
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: -24 }}
-                transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
+                transition={{ duration: 0.25, ease: [0.16, 1, 0.3, 1] }}
               >
                 <h3
                   data-testid="council-active-member"
-                  className="mt-2 font-serif text-3xl font-light text-white sm:text-4xl"
+                  className="mt-1.5 truncate font-serif text-xl font-light leading-tight text-white sm:mt-2 sm:text-3xl lg:text-4xl"
                 >
                   {current.name}
                 </h3>
                 <p
-                  className="mt-2 text-xs uppercase tracking-[0.3em]"
+                  className="mt-1.5 truncate text-[10px] uppercase tracking-[0.25em] sm:mt-2 sm:text-xs sm:tracking-[0.3em]"
                   style={{ color: group.color }}
                 >
                   {current.position}
@@ -158,7 +168,7 @@ export const CouncilRing = ({ members }) => {
               </motion.div>
             </AnimatePresence>
 
-            {/* contact bubble docked in the panel (no longer overlaps the ring) */}
+            {/* contact bubble docked in the panel — follows the active member on scroll */}
             <AnimatePresence>
               {bubbleMember && (
                 <motion.div
@@ -168,20 +178,20 @@ export const CouncilRing = ({ members }) => {
                   animate={{ opacity: 1, y: 0, scale: 1 }}
                   exit={{ opacity: 0, y: 8, scale: 0.97 }}
                   transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}
-                  className="pointer-events-auto mt-5 w-full max-w-xs rounded-2xl border bg-[#0a0b10]/85 p-5 backdrop-blur-xl"
+                  className="pointer-events-auto mt-3 w-full max-w-xs rounded-2xl border bg-[#0a0b10]/85 p-4 backdrop-blur-xl sm:mt-5 sm:p-5"
                   style={{ borderColor: `${group.color}55` }}
                 >
                   <p
                     data-testid="member-bubble-bio"
-                    className="text-sm font-light leading-relaxed text-white/60"
+                    className="text-xs font-light leading-relaxed text-white/60 sm:text-sm"
                   >
                     {bubbleMember.bio}
                   </p>
-                  <div className="mt-4 space-y-2 border-t border-white/10 pt-3">
+                  <div className="mt-3 space-y-2 border-t border-white/10 pt-3 sm:mt-4">
                     <a
                       data-testid="member-bubble-email"
                       href={`mailto:${bubbleMember.email}`}
-                      className="flex items-center gap-2.5 text-xs font-light text-white/70 transition-colors duration-300 hover:text-white"
+                      className="flex items-center gap-2.5 text-[11px] font-light text-white/70 transition-colors duration-300 hover:text-white sm:text-xs"
                     >
                       <Mail size={12} className="shrink-0 text-white/40" />
                       {bubbleMember.email}
@@ -189,7 +199,7 @@ export const CouncilRing = ({ members }) => {
                     <a
                       data-testid="member-bubble-phone"
                       href={`tel:${bubbleMember.phone.replace(/\s/g, "")}`}
-                      className="flex items-center gap-2.5 text-xs font-light text-white/70 transition-colors duration-300 hover:text-white"
+                      className="flex items-center gap-2.5 text-[11px] font-light text-white/70 transition-colors duration-300 hover:text-white sm:text-xs"
                     >
                       <Phone size={12} className="shrink-0 text-white/40" />
                       {bubbleMember.phone}
@@ -203,24 +213,24 @@ export const CouncilRing = ({ members }) => {
 
         {/* ---- finale header ---- */}
         {allMode && (
-          <div className="pointer-events-none absolute inset-x-0 top-16 z-20 flex flex-col items-center px-6 text-center">
+          <div className="pointer-events-none absolute inset-x-0 top-10 z-20 flex flex-col items-center px-6 text-center sm:top-16">
             <p
               data-testid="council-ring-indicator"
-              className="text-[10px] uppercase tracking-[0.5em] text-white/40"
+              className="text-[9px] uppercase tracking-[0.35em] text-white/40 sm:text-[10px] sm:tracking-[0.5em]"
             >
               Everyone · all at once
             </p>
-            <h3 className="mt-4 font-serif text-3xl font-light text-white sm:text-4xl">
+            <h3 className="mt-3 font-serif text-2xl font-light text-white sm:mt-4 sm:text-3xl lg:text-4xl">
               The full <span className="italic text-white/60">council</span>
             </h3>
-            <div className="mt-5 flex flex-wrap items-center justify-center gap-x-6 gap-y-2">
+            <div className="mt-4 flex flex-wrap items-center justify-center gap-x-4 gap-y-1.5 sm:mt-5 sm:gap-x-6 sm:gap-y-2">
               {rings.map((r) => (
-                <span key={r.name} className="flex items-center gap-2">
+                <span key={r.name} className="flex items-center gap-1.5 sm:gap-2">
                   <span
-                    className="inline-block h-2 w-2 rounded-full"
+                    className="inline-block h-1.5 w-1.5 rounded-full sm:h-2 sm:w-2"
                     style={{ background: r.color }}
                   />
-                  <span className="text-[10px] uppercase tracking-[0.3em] text-white/50">
+                  <span className="text-[9px] uppercase tracking-[0.2em] text-white/50 sm:text-[10px] sm:tracking-[0.3em]">
                     {r.name} · {r.members.length}
                   </span>
                 </span>
@@ -255,7 +265,12 @@ export const CouncilRing = ({ members }) => {
                       <div
                         key={m.id}
                         data-testid={`council-ring-card-${i}`}
-                        onClick={() => i === active && setBubble(bubble === i ? null : i)}
+                        onClick={() => {
+                          if (i !== active) return;
+                          const next = bubble === i ? null : i;
+                          setBubble(next);
+                          bubbleOpenRef.current = next !== null;
+                        }}
                         className={`absolute inset-0 overflow-hidden rounded-lg border bg-white/5 backdrop-blur-md transition-colors duration-300 ${i === active ? "cursor-pointer" : ""
                           }`}
                         style={{
@@ -355,7 +370,7 @@ export const CouncilRing = ({ members }) => {
           </div>
         </div>
 
-        <p className="pointer-events-none absolute bottom-8 left-1/2 -translate-x-1/2 text-[10px] uppercase tracking-[0.35em] text-white/30">
+        <p className="pointer-events-none absolute bottom-5 left-1/2 -translate-x-1/2 px-4 text-center text-[9px] uppercase tracking-[0.25em] text-white/30 sm:bottom-8 sm:text-[10px] sm:tracking-[0.35em]">
           {allMode
             ? "the whole council, in orbit"
             : "scroll — this ring lifts, the next one rises"}

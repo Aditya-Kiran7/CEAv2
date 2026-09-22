@@ -8,10 +8,11 @@ import {
 import { Hand, Play } from "lucide-react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { useAudio } from "../audio/AudioContext";
+import { useIsMobile } from "../hooks/useIsMobile";
 
 const DURATION = 2400; // load countdown
 const HOLD_SECONDS = 5; // fallback if video duration isn't available
-const AUTO_HOLD_SECONDS = 3; // hold time before autoplay locks in
+const AUTO_HOLD_SECONDS = 1.5; // hold time before autoplay locks in
 const RING_C = 213.6; // hold ring circumference
 
 // Custom intro video
@@ -22,6 +23,7 @@ export const EnterGate = () => {
   const location = useLocation();
 
   const { entered, startIntro, enter } = useAudio();
+  const isMobile = useIsMobile();
 
   const [count, setCount] = useState(99);
   const [phase, setPhase] = useState("load");
@@ -166,10 +168,10 @@ export const EnterGate = () => {
   }, [entered, phase]);
 
   // ============================================================
-  // HOLD → 3 SECONDS → AUTOPLAY
+  // HOLD → SECONDS → AUTOPLAY (desktop only; mobile skips this flow)
   // ============================================================
   useEffect(() => {
-    if (phase !== "hold" || entered) return;
+    if (phase !== "hold" || entered || isMobile) return;
 
     const holdState = {
       v: false,
@@ -360,6 +362,7 @@ export const EnterGate = () => {
     entered,
     startIntro,
     autoPlaying,
+    isMobile,
   ]);
 
   return (
@@ -396,12 +399,7 @@ export const EnterGate = () => {
                 }}
                 transition={{
                   duration: 1.1,
-                  ease: [
-                    0.16,
-                    1,
-                    0.3,
-                    1,
-                  ],
+                  ease: [0.16, 1, 0.3, 1],
                 }}
                 className="flex h-24 w-24 items-center justify-center rounded-full border border-white/20"
               >
@@ -422,14 +420,9 @@ export const EnterGate = () => {
                 transition={{
                   duration: 0.9,
                   delay: 0.25,
-                  ease: [
-                    0.16,
-                    1,
-                    0.3,
-                    1,
-                  ],
+                  ease: [0.16, 1, 0.3, 1],
                 }}
-                className="mt-10 text-center font-serif text-4xl font-light text-white sm:text-5xl"
+                className="mt-10 text-center font-serif text-3xl font-light leading-tight text-white sm:text-5xl"
               >
                 Civil Engineering{" "}
                 <span className="italic text-white/70">
@@ -464,7 +457,7 @@ export const EnterGate = () => {
                   duration: 0.8,
                   delay: 0.6,
                 }}
-                className="mt-16 flex w-64 flex-col items-center sm:w-80"
+                className="mt-12 flex w-56 flex-col items-center sm:mt-16 sm:w-80"
               >
                 <span
                   data-testid="loader-count"
@@ -488,9 +481,33 @@ export const EnterGate = () => {
                 </p>
               </motion.div>
             </div>
+          ) : isMobile ? (
+            // =====================================================
+            // MOBILE: simple tap-to-enter, no video
+            // =====================================================
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ duration: 0.6 }}
+              className="flex h-full w-full flex-col items-center justify-center px-6 text-center"
+            >
+              <p className="font-serif text-2xl font-light italic text-white/85 sm:text-3xl">
+                the story
+              </p>
+              <p className="mt-3 text-[10px] uppercase tracking-[0.3em] text-white/40">
+                Civil Engineering Association
+              </p>
+              <button
+                data-testid="mobile-enter-button"
+                onClick={() => finishRef.current()}
+                className="mt-10 rounded-lg border border-white/20 px-8 py-3 text-xs uppercase tracking-[0.3em] text-white/85 transition-colors duration-300 active:border-white/50"
+              >
+                Tap to enter
+              </button>
+            </motion.div>
           ) : (
             // =====================================================
-            // INTRO VIDEO
+            // DESKTOP: hold-video intro
             // =====================================================
             <motion.div
               initial={{
@@ -526,12 +543,7 @@ export const EnterGate = () => {
                 }}
                 transition={{
                   duration: 0.45,
-                  ease: [
-                    0.16,
-                    1,
-                    0.3,
-                    1,
-                  ],
+                  ease: [0.16, 1, 0.3, 1],
                 }}
                 style={{
                   x: videoSmoothX,
@@ -588,7 +600,7 @@ export const EnterGate = () => {
                 <p className="mt-2 px-6 text-center text-[10px] uppercase tracking-[0.22em] text-white/40 sm:tracking-[0.35em]">
                   {autoPlaying
                     ? "let it play"
-                    : "hold for 3 seconds"}
+                    : "hold for a second"}
                 </p>
               </div>
 

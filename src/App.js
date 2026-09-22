@@ -122,7 +122,7 @@ function App() {
     <AudioProvider>
       <HashRouter>
         <SmoothScroll>
-          <div className="min-h-screen bg-[#050508] text-white">
+          <div className="min-h-screen bg-[var(--bg)] text-white">
             <Shell />
           </div>
         </SmoothScroll>

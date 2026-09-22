@@ -12,12 +12,12 @@ const CHAPTERS = [
   {
     n: "01",
     title: "Who we are",
-    text: "The Civil Engineering Association is the student body of the Department of Civil Engineering at IIT Bombay — a council of sixteen, speaking for hundreds of builders, dreamers and structural romantics.",
+    text: "The Civil Engineering Association is the student body of the Department of Civil Engineering at IIT Bombay — a council of nineteen, speaking for hundreds of builders, dreamers and structural romantics.",
   },
   {
     n: "02",
     title: "What we do",
-    text: "We run Aakaar, the department's annual festival; take students onto live metro, coastal-road and dam sites; host lectures, workshops and design competitions through the year.",
+    text: "We organize many events, the department's orientation, host trips, host amazing nights, SOCore and design competitions through the year.",
   },
   {
     n: "03",
@@ -134,48 +134,7 @@ export default function Home() {
         </div>
       </section>
 
-      {/* MAJOR EVENTS */}
-      <section
-        data-testid="major-events-section"
-        className="mx-auto max-w-7xl px-6 pb-32 lg:px-12 lg:pb-48"
-      >
-        <div className="flex flex-col gap-6 md:flex-row md:items-end md:justify-between">
-          <div>
-            <Reveal whoosh={false}>
-              <p className="flex items-center gap-4 text-[11px] uppercase tracking-[0.4em] text-white/40">
-                <span className="h-px w-10 bg-white/25" /> Flagship
-              </p>
-            </Reveal>
-            <Reveal delay={0.08}>
-              <h2 className="mt-6 font-serif text-4xl font-light text-white sm:text-5xl">
-                Three nights <span className="italic text-white/60">we live for</span>
-              </h2>
-            </Reveal>
-          </div>
-          <Reveal delay={0.15} whoosh={false}>
-            <Link
-              to="/events"
-              data-testid="see-all-events-link"
-              className="group flex items-center gap-3 text-[11px] uppercase tracking-[0.3em] text-white/50 transition-colors duration-300 hover:text-white"
-            >
-              All events
-              <ArrowRight size={14} className="transition-transform duration-300 group-hover:translate-x-1" />
-            </Link>
-          </Reveal>
-        </div>
-        <div className="mt-16 grid gap-10 md:grid-cols-3">
-          {MAJOR_EVENTS.map((e, i) => (
-            <ContentCard
-              key={e.id}
-              item={e}
-              index={i}
-              prefix="major-event"
-              aspect="aspect-[4/5]"
-              label={`E·${String(i + 1).padStart(2, "0")}`}
-            />
-          ))}
-        </div>
-      </section>
+      
 
       <Marquee
         items={["Aakaar 2026", "Bridge-It", "Concreto", "Site visits", "Guest lectures"]}
