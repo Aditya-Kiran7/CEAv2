@@ -27,19 +27,23 @@ export const Navbar = () => {
       >
         <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-6 lg:h-20 lg:px-12">
           <Link
-            to="/"
-            data-testid="navbar-logo"
-            className="group flex items-baseline gap-3"
-            onClick={() => setOpen(false)}
-          >
-            <span className="font-serif text-2xl italic tracking-wide text-white transition-colors duration-300 group-hover:text-[#FFD1DC]">
-              CEA
-            </span>
-            <span className="hidden text-[10px] uppercase tracking-[0.35em] text-white/40 sm:block">
-              IIT Bombay
-            </span>
-          </Link>
-
+          to="/"
+          data-testid="navbar-logo"
+          className="group flex items-center gap-3"
+          onClick={() => setOpen(false)}
+        >
+          <img
+            src="/cea/logo.png"
+            alt="CEA Logo"
+            className="h-8 w-auto lg:h-9"
+          />
+          <span className="font-serif text-2xl italic tracking-wide text-white transition-colors duration-300 group-hover:text-[#FFD1DC]">
+            CEA
+          </span>
+          <span className="hidden text-[10px] uppercase tracking-[0.35em] text-white/40 sm:block">
+            IIT Bombay
+          </span>
+        </Link>
           <nav className="hidden items-center gap-8 md:flex" data-testid="nav-links">
             {LINKS.map((l) => (
               <NavLink

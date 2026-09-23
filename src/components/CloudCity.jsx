@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { motion, useMotionValue, useSpring } from "framer-motion";
+import { CloudRain, CloudOff } from "lucide-react";
 import { useAudio } from "../audio/AudioContext";
 import { useIsMobile } from "../hooks/useIsMobile";
 
@@ -26,8 +27,9 @@ export default function MapPage() {
   const isMobile = useIsMobile();
   const [hovered, setHovered] = useState(null);
   const [entered, setEntered] = useState(false);
-  
+
   const [rain, setRain] = useState(false);
+  const [rainEnabled, setRainEnabled] = useState(true); // user toggle
   const rainRef = useRef(null);
   const rainAudioRef = useRef(null); // rain sound element
   const navigate = useNavigate();
@@ -38,7 +40,6 @@ export default function MapPage() {
   const sx = useSpring(mx, { stiffness: 40, damping: 16 });
   const sy = useSpring(my, { stiffness: 40, damping: 16 });
 
-
   // clouds part only after the intro gate lifts and the site fades in
   useEffect(() => {
     if (!gateDone) return;
@@ -46,11 +47,12 @@ export default function MapPage() {
     return () => clearTimeout(t);
   }, [gateDone]);
 
-  // clouds billow IN (as the veil lifts), hold, then part
-  
-
-  // monsoon scheduler: first drizzle at ~15s, then random episodes
+  // monsoon scheduler: first drizzle at ~15s, then random episodes — only while rainEnabled
   useEffect(() => {
+    if (!rainEnabled) {
+      setRain(false);
+      return;
+    }
     let alive = true;
     let t1;
     let t2;
@@ -71,7 +73,7 @@ export default function MapPage() {
       clearTimeout(t1);
       clearTimeout(t2);
     };
-  }, []);
+  }, [rainEnabled]);
 
   // rain streak canvas
   useEffect(() => {
@@ -119,34 +121,34 @@ export default function MapPage() {
     };
   }, []);
 
-  // fade rain sound in/out with rain state
+  // fade rain sound in/out with rain state (desktop only)
   useEffect(() => {
-  if (isMobile) return;
-  const audio = rainAudioRef.current;
-  if (!audio) return;
+    if (isMobile) return;
+    const audio = rainAudioRef.current;
+    if (!audio) return;
 
-  let raf;
-  const targetVol = rain ? 0.2 : 0;
+    let raf;
+    const targetVol = rain ? 0.25 : 0; // lowered volume
 
-  if (rain) {
-    audio.volume = 0;
-    audio.play().catch(() => {});
-  }
-
-  const step = () => {
-    const diff = targetVol - audio.volume;
-    if (Math.abs(diff) < 0.01) {
-      audio.volume = targetVol;
-      if (!rain) audio.pause();
-      return;
+    if (rain) {
+      audio.volume = 0;
+      audio.play().catch(() => {});
     }
-    audio.volume += diff * 0.05;
-    raf = requestAnimationFrame(step);
-  };
-  raf = requestAnimationFrame(step);
 
-  return () => cancelAnimationFrame(raf);
-}, [rain, isMobile]); 
+    const step = () => {
+      const diff = targetVol - audio.volume;
+      if (Math.abs(diff) < 0.01) {
+        audio.volume = targetVol;
+        if (!rain) audio.pause();
+        return;
+      }
+      audio.volume += diff * 0.05;
+      raf = requestAnimationFrame(step);
+    };
+    raf = requestAnimationFrame(step);
+
+    return () => cancelAnimationFrame(raf);
+  }, [rain, isMobile]);
 
   const onMouse = (e) => {
     mx.set((e.clientX / window.innerWidth - 0.5) * -18);
@@ -229,49 +231,57 @@ export default function MapPage() {
         <canvas ref={rainRef} data-testid="rain-canvas" className="absolute inset-0" />
       </div>
 
-      {/* entry clouds */}
-      
+      {/* rain toggle */}
+      <button
+        data-testid="rain-toggle"
+        onClick={() => setRainEnabled((v) => !v)}
+        aria-label={rainEnabled ? "Turn off rain" : "Turn on rain"}
+        className="pointer-events-auto absolute right-4 top-4 z-20 flex items-center gap-2 rounded-lg border border-white/15 bg-black/45 px-3.5 py-2 text-[10px] uppercase tracking-[0.25em] text-white/70 backdrop-blur-md transition-colors duration-300 hover:border-white/40 hover:text-white sm:right-6 sm:top-6"
+      >
+        {rainEnabled ? <CloudRain size={14} /> : <CloudOff size={14} />}
+        <span className="hidden sm:inline">{rainEnabled ? "Rain on" : "Rain off"}</span>
+      </button>
 
       {/* building hotspots — always-on neon name tags, appear as clouds part */}
       {entered &&
-          SPOTS.map((L) => (
+        SPOTS.map((L) => (
           <button
-      key={L.path}
-      data-testid={`city-label-${L.label.toLowerCase()}`}
-      onClick={() => navigate(L.path)}
-      onMouseEnter={() => setHovered(L.label)}
-      onMouseLeave={() => setHovered(null)}
-      className="group absolute z-10 flex -translate-x-1/2 -translate-y-1/2 items-center justify-center p-4 sm:p-6"
-      style={{ left: `${L.x}%`, top: `${L.y}%` }}
-      aria-label={L.label}
-    >
-      {/* fixed-size square glow, so it's a true circle, not stretched to the label's shape */}
-      <span
-        className="pointer-events-none absolute left-1/2 top-1/2 h-28 w-28 -translate-x-1/2 -translate-y-1/2 rounded-full opacity-30 transition-opacity duration-500 group-hover:opacity-70 sm:h-36 sm:w-36"
-        style={{
-          background:
-            "radial-gradient(circle, rgba(232,236,244,0.55) 0%, rgba(232,236,244,0.22) 45%, transparent 70%)",
-          mixBlendMode: "screen",
-        }}
-      />
-      <span
-        className={`relative max-w-[52vw] truncate whitespace-nowrap rounded-lg px-3.5 py-1.5 text-xs font-semibold uppercase tracking-[0.18em] backdrop-blur-md transition-[transform,background-color,box-shadow] duration-300 sm:max-w-none sm:px-5 sm:py-2 sm:text-sm sm:tracking-[0.25em] ${hovered === L.label ? "scale-110 bg-black/80" : "bg-black/55"
-          }`}
-        style={{
-          color: "#E8ECF4",
-          boxShadow:
-            hovered === L.label
-              ? "0 0 10px rgba(232,236,244,0.35), inset 0 0 6px rgba(232,236,244,0.12)"
-              : "none",
-          textShadow:
-            hovered === L.label
-              ? "0 0 4px rgba(232,236,244,0.9), 0 0 10px rgba(232,236,244,0.6)"
-              : "0 0 3px rgba(232,236,244,0.55), 0 0 8px rgba(232,236,244,0.3)",
-        }}
-      >
-        {L.label}
-      </span>
-    </button>
+            key={L.path}
+            data-testid={`city-label-${L.label.toLowerCase()}`}
+            onClick={() => navigate(L.path)}
+            onMouseEnter={() => setHovered(L.label)}
+            onMouseLeave={() => setHovered(null)}
+            className="group absolute z-10 flex -translate-x-1/2 -translate-y-1/2 items-center justify-center p-4 sm:p-6"
+            style={{ left: `${L.x}%`, top: `${L.y}%` }}
+            aria-label={L.label}
+          >
+            {/* fixed-size square glow, so it's a true circle, not stretched to the label's shape */}
+            <span
+              className="pointer-events-none absolute left-1/2 top-1/2 h-36 w-36 -translate-x-1/2 -translate-y-1/2 rounded-full opacity-45 transition-opacity duration-500 group-hover:opacity-90 sm:h-48 sm:w-48"
+              style={{
+                background:
+                  "radial-gradient(circle, rgba(232,236,244,0.75) 0%, rgba(232,236,244,0.32) 45%, transparent 72%)",
+                mixBlendMode: "screen",
+              }}
+            />
+            <span
+              className={`relative max-w-[52vw] truncate whitespace-nowrap rounded-lg px-3.5 py-1.5 text-xs font-semibold uppercase tracking-[0.18em] backdrop-blur-md transition-[transform,background-color,box-shadow] duration-300 sm:max-w-none sm:px-5 sm:py-2 sm:text-sm sm:tracking-[0.25em] ${hovered === L.label ? "scale-110 bg-black/80" : "bg-black/55"
+                }`}
+              style={{
+                color: "#E8ECF4",
+                boxShadow:
+                  hovered === L.label
+                    ? "0 0 28px rgba(232,236,244,0.65), 0 0 60px rgba(232,236,244,0.3), inset 0 0 14px rgba(232,236,244,0.25)"
+                    : "0 0 14px rgba(232,236,244,0.2)",
+                textShadow:
+                  hovered === L.label
+                    ? "0 0 6px rgba(232,236,244,1), 0 0 16px rgba(232,236,244,0.9), 0 0 32px rgba(232,236,244,0.6)"
+                    : "0 0 4px rgba(232,236,244,0.7), 0 0 12px rgba(232,236,244,0.45)",
+              }}
+            >
+              {L.label}
+            </span>
+          </button>
         ))}
 
       <motion.div

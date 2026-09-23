@@ -1,11 +1,7 @@
-import { ArrowRight } from "lucide-react";
-import { Link } from "react-router-dom";
 import { useAudio } from "../audio/AudioContext";
 import { Reveal } from "../components/Reveal";
 import { ZeroDraw } from "../components/ZeroDraw";
 import { Marquee } from "../components/Marquee";
-import { ContentCard } from "../components/ContentCard";
-import { MAJOR_EVENTS } from "../data/events";
 import { SITE } from "../data/site";
 
 const CHAPTERS = [
@@ -52,7 +48,8 @@ export default function Home() {
           </Reveal>
           <h1
             data-testid="hero-title"
-            className="mt-8 font-serif text-5xl font-light leading-[0.95] tracking-tight text-white sm:text-6xl md:text-7xl lg:text-8xl"
+            className="mt-8 font-serif text-6xl font-light leading-[0.95] tracking-tight text-white sm:text-7xl md:text-8xl lg:text-9xl"
+            style={{ textShadow: "0 4px 30px rgba(0,0,0,0.5), 0 0 60px rgba(255,209,220,0.15)" }}
           >
             <Reveal play={entered} delay={0.1} whoosh={false}>
               <span className="italic text-white/85">Civil</span>
@@ -100,7 +97,10 @@ export default function Home() {
               </p>
             </Reveal>
             <Reveal delay={0.08}>
-              <h2 className="mt-6 font-serif text-4xl font-light leading-tight text-white sm:text-5xl">
+              <h2
+                className="mt-6 font-serif text-5xl font-light leading-tight text-white sm:text-6xl"
+                style={{ textShadow: "0 4px 24px rgba(0,0,0,0.45)" }}
+              >
                 Built on bedrock, <br />
                 <span className="italic text-white/60">reaching skyward.</span>
               </h2>
@@ -122,7 +122,12 @@ export default function Home() {
                 </span>
               </Reveal>
               <Reveal delay={0.08}>
-                <h3 className="mt-4 font-serif text-3xl font-light text-white">{c.title}</h3>
+                <h3
+                  className="mt-4 font-serif text-4xl font-light text-white"
+                  style={{ textShadow: "0 3px 18px rgba(0,0,0,0.4)" }}
+                >
+                  {c.title}
+                </h3>
               </Reveal>
               <Reveal delay={0.14} whoosh={false}>
                 <p className="mt-5 max-w-lg text-base font-light leading-relaxed text-white/55">
@@ -134,10 +139,8 @@ export default function Home() {
         </div>
       </section>
 
-      
-
       <Marquee
-        items={["Aakaar 2026", "Bridge-It", "Concreto", "Site visits", "Guest lectures"]}
+        items={["Orientation 2026", "Dept. Treks", "Civil Insights", "Convocation", "Fun Events!"]}
       />
     </div>
   );

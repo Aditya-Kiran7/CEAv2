@@ -1,6 +1,7 @@
 import { useMemo, useRef, useState } from "react";
 import { motion, AnimatePresence, useScroll, useMotionValueEvent } from "framer-motion";
 import { Mail, Phone } from "lucide-react";
+import { useIsMobile } from "../hooks/useIsMobile";
 
 const RADIUS = 620;
 const CARD_W = 210;
@@ -20,6 +21,7 @@ const RING_DEFS = [
 ];
 
 export const CouncilRing = ({ members }) => {
+  const isMobile = useIsMobile();
   const ref = useRef(null);
 
   const rings = useMemo(() => {
@@ -103,6 +105,13 @@ export const CouncilRing = ({ members }) => {
   const step = 360 / n;
   const current = group.members[active] || group.members[0];
   const bubbleMember = bubble !== null ? group.members[bubble] : null;
+  const skipToFinale = () => {
+  if (!ref.current) return;
+  const rect = ref.current.getBoundingClientRect();
+  const top = window.scrollY + rect.top + rect.height - window.innerHeight + 20;
+  window.scrollTo({ top, behavior: "smooth" });
+};
+  if (isMobile) return null;
 
   return (
     <section
@@ -112,6 +121,15 @@ export const CouncilRing = ({ members }) => {
       style={{ height: `${totalVh}vh` }}
     >
       <div className="sticky top-0 flex h-screen items-center overflow-hidden">
+        {!allMode && (
+        <button
+          onClick={skipToFinale}
+          data-testid="skip-to-all-button"
+          className="pointer-events-auto absolute right-6 top-6 z-30 rounded-lg border border-white/15 bg-black/40 px-4 py-2 text-[10px] uppercase tracking-[0.3em] text-white/60 backdrop-blur-md transition-colors duration-300 hover:border-white/40 hover:text-white lg:right-12 lg:top-10"
+        >
+          Skip to all →
+        </button>
+      )}
         <div
           className="absolute inset-0"
           style={{

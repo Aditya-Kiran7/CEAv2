@@ -9,7 +9,10 @@ export const PageHeader = ({ kicker, title, sub, testid }) => (
       </p>
     </Reveal>
     <Reveal delay={0.08}>
-      <h1 className="mt-6 font-serif text-4xl font-light leading-none tracking-tight text-white sm:text-5xl lg:text-6xl">
+      <h1
+        className="mt-6 font-serif text-5xl font-light leading-none tracking-tight text-white sm:text-6xl lg:text-7xl"
+        style={{ textShadow: "0 4px 28px rgba(0,0,0,0.5), 0 0 50px rgba(255,209,220,0.12)" }}
+      >
         {title}
       </h1>
     </Reveal>

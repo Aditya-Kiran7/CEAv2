@@ -1,7 +1,7 @@
 import { useEffect, useRef } from "react";
 import { useIsMobile } from "../hooks/useIsMobile";
 
-const COUNT = 6;
+const COUNT = 7;
 const GLOW_RADIUS = 220;
 
 export const PetalCanvas = () => {
@@ -63,9 +63,9 @@ export const PetalCanvas = () => {
       if (p.glow > 0.02) {
         const r = p.size * (3 + p.glow * 3);
         const halo = ctx.createRadialGradient(0, 0, 0, 0, 0, r);
-        halo.addColorStop(0, `rgba(180, 245, 255, ${0.5 * p.glow})`);
-        halo.addColorStop(0.5, `rgba(120, 220, 240, ${0.18 * p.glow})`);
-        halo.addColorStop(1, "rgba(120, 220, 240, 0)");
+        halo.addColorStop(0, `rgba(255, 205, 70, ${0.5 * p.glow})`);
+        halo.addColorStop(0.5, `rgba(255, 230, 170, ${0.18 * p.glow})`);
+        halo.addColorStop(1, "rgba(255, 230, 170, 0)");
         ctx.fillStyle = halo;
         ctx.beginPath();
         ctx.arc(0, 0, r, 0, Math.PI * 2);
@@ -76,8 +76,8 @@ export const PetalCanvas = () => {
       const s = p.size;
       const boost = 1 + p.glow * 0.9;
       const g = ctx.createLinearGradient(0, -s, 0, s);
-      g.addColorStop(0, `rgba(200, 250, 255, ${Math.min(1, p.alpha * boost)})`);
-      g.addColorStop(1, `rgba(65, 191, 223, ${Math.min(1, p.alpha * 0.8 * boost)})`);
+      g.addColorStop(0, `rgba(255, 205, 70, ${Math.min(1, p.alpha * boost)})`);
+      g.addColorStop(1, `rgba(255, 248, 230, ${Math.min(1, p.alpha * 0.8 * boost)})`);
       ctx.fillStyle = g;
       ctx.beginPath();
       ctx.moveTo(0, -s);

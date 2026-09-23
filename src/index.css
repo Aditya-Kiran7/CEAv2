@@ -5,19 +5,20 @@
 @tailwind utilities;
 
 :root {
-  --bg: #1b1b4d;
-  --pink: #ffd1dc;
-  --glow: #e0e7ff;
+  --bg: #14110a;
+  --pink: #4f7fee;
+  --glow: #4a0d11;
 }
 
 html {
   background: var(--bg);
+  background: radial-gradient(ellipse 80% 60% at 50% 0%, #1a1815 0%, #0e0d0b 60%);
 }
 
 body {
   margin: 0;
   font-family: 'Manrope', ui-sans-serif, system-ui, sans-serif;
-  background: var(--bg);
+  background: transparent;
   color: #fff;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
