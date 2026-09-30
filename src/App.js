@@ -72,7 +72,7 @@ const Chrome = () => {
   const { pathname } = useLocation();
   const path = pathname.replace(/\/+$/, "") || "/"; // ingress may add a trailing slash
   const isMap = path === "/map";
-  const isHome = path === "/" || path === "/cea"; // /cea is the legacy entry link
+  const isHome = path === "/";
   return (
     <>
       {isHome && <Navbar />}
@@ -80,7 +80,6 @@ const Chrome = () => {
       <main>
         <Routes>
           <Route path="/" element={<Home />} />
-          <Route path="/cea" element={<Home />} />
           <Route path="/map" element={<MapPage />} />
           <Route path="/events" element={<Events />} />
           <Route path="/blogs" element={<Blogs />} />
@@ -98,10 +97,10 @@ const Chrome = () => {
 const Shell = () => {
   const { pathname } = useLocation();
   const path = pathname.replace(/\/+$/, "") || "/";
-  if (path === "/verify") {
+  if (path === "/cea/verify") {
     return (
       <Routes>
-        <Route path="/verify" element={<Certify />} />
+        <Route path="/cea/verify" element={<Certify />} />
       </Routes>
     );
   }

@@ -13,7 +13,7 @@ export default function Events() {
             Events, <span className="italic text-white/60">in concrete & spirit</span>
           </>
         }
-        sub="Festivals, competitions, site visits and lectures — everything the association puts into the world."
+        sub="Festivals, specials and fun activities, everything we work onto."
       />
       <div className="mx-auto grid max-w-7xl gap-10 px-6 pb-32 md:grid-cols-2 lg:grid-cols-3 lg:px-12">
         {EVENTS.map((e, i) => (

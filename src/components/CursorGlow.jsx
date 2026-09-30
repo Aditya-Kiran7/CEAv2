@@ -2,8 +2,8 @@ import { useEffect } from "react";
 import { motion, useMotionValue, useSpring } from "framer-motion";
 
 export const CursorGlow = () => {
-  const x = useMotionValue(-600);
-  const y = useMotionValue(-600);
+  const x = useMotionValue(-700);
+  const y = useMotionValue(-700);
   const sx = useSpring(x, { stiffness: 90, damping: 18, mass: 0.6 });
   const sy = useSpring(y, { stiffness: 90, damping: 18, mass: 0.6 });
 

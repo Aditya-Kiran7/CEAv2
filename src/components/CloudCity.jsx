@@ -142,7 +142,7 @@ export default function MapPage() {
         if (!rain) audio.pause();
         return;
       }
-      audio.volume += diff * 0.05;
+      audio.volume = Math.min(1, Math.max(0, audio.volume + diff * 0.05));
       raf = requestAnimationFrame(step);
     };
     raf = requestAnimationFrame(step);
@@ -231,18 +231,18 @@ export default function MapPage() {
         <canvas ref={rainRef} data-testid="rain-canvas" className="absolute inset-0" />
       </div>
 
-      {/* rain toggle */}
+      {/* rain toggle (bigger on desktop: lg:) */}
       <button
         data-testid="rain-toggle"
         onClick={() => setRainEnabled((v) => !v)}
         aria-label={rainEnabled ? "Turn off rain" : "Turn on rain"}
-        className="pointer-events-auto absolute right-4 top-4 z-20 flex items-center gap-2 rounded-lg border border-white/15 bg-black/45 px-3.5 py-2 text-[10px] uppercase tracking-[0.25em] text-white/70 backdrop-blur-md transition-colors duration-300 hover:border-white/40 hover:text-white sm:right-6 sm:top-6"
+        className="pointer-events-auto absolute right-4 top-4 z-20 flex items-center gap-2 rounded-lg border border-white/15 bg-black/45 px-3.5 py-2 text-[10px] uppercase tracking-[0.25em] text-white/70 backdrop-blur-md transition-colors duration-300 hover:border-white/40 hover:text-white sm:right-6 sm:top-6 lg:right-10 lg:top-10 lg:gap-3 lg:px-6 lg:py-3.5 lg:text-sm"
       >
-        {rainEnabled ? <CloudRain size={14} /> : <CloudOff size={14} />}
+        {rainEnabled ? <CloudRain size={isMobile ? 14 : 20} /> : <CloudOff size={isMobile ? 14 : 20} />}
         <span className="hidden sm:inline">{rainEnabled ? "Rain on" : "Rain off"}</span>
       </button>
 
-      {/* building hotspots — always-on neon name tags, appear as clouds part */}
+      {/* building hotspots — always-on neon name tags, appear as clouds part (bigger on desktop: lg:) */}
       {entered &&
         SPOTS.map((L) => (
           <button
@@ -251,32 +251,30 @@ export default function MapPage() {
             onClick={() => navigate(L.path)}
             onMouseEnter={() => setHovered(L.label)}
             onMouseLeave={() => setHovered(null)}
-            className="group absolute z-10 flex -translate-x-1/2 -translate-y-1/2 items-center justify-center p-4 sm:p-6"
+            className="group absolute z-10 flex -translate-x-1/2 -translate-y-1/2 items-center justify-center p-4 sm:p-6 lg:p-8"
             style={{ left: `${L.x}%`, top: `${L.y}%` }}
             aria-label={L.label}
           >
-            {/* fixed-size square glow, so it's a true circle, not stretched to the label's shape */}
+            {/* soft diffused glow — blurred instead of a hard-edged circle */}
             <span
-              className="pointer-events-none absolute left-1/2 top-1/2 h-36 w-36 -translate-x-1/2 -translate-y-1/2 rounded-full opacity-45 transition-opacity duration-500 group-hover:opacity-90 sm:h-48 sm:w-48"
+              className="pointer-events-none absolute left-1/2 top-1/2 h-40 w-40 -translate-x-1/2 -translate-y-1/2 rounded-full opacity-40 blur-xl transition-opacity duration-500 group-hover:opacity-80 sm:h-56 sm:w-56 lg:h-72 lg:w-72"
               style={{
                 background:
-                  "radial-gradient(circle, rgba(232,236,244,0.75) 0%, rgba(232,236,244,0.32) 45%, transparent 72%)",
+                  "radial-gradient(circle, rgba(232,236,244,0.85) 0%, rgba(232,236,244,0.3) 45%, transparent 2%)",
                 mixBlendMode: "screen",
               }}
             />
+            {/* fully transparent, borderless label — just glowing text */}
             <span
-              className={`relative max-w-[52vw] truncate whitespace-nowrap rounded-lg px-3.5 py-1.5 text-xs font-semibold uppercase tracking-[0.18em] backdrop-blur-md transition-[transform,background-color,box-shadow] duration-300 sm:max-w-none sm:px-5 sm:py-2 sm:text-sm sm:tracking-[0.25em] ${hovered === L.label ? "scale-110 bg-black/80" : "bg-black/55"
-                }`}
+              className={`relative max-w-[52vw] truncate whitespace-nowrap rounded-lg px-3.5 py-1.5 text-xs font-black uppercase tracking-[0.18em] transition-transform duration-300 sm:max-w-none sm:px-4 sm:text-lg sm:tracking-[0.3em] lg:px-6 lg:py-3 lg:text-3xl ${
+                hovered === L.label ? "scale-110" : ""
+              }`}
               style={{
                 color: "#E8ECF4",
-                boxShadow:
-                  hovered === L.label
-                    ? "0 0 28px rgba(232,236,244,0.65), 0 0 60px rgba(232,236,244,0.3), inset 0 0 14px rgba(232,236,244,0.25)"
-                    : "0 0 14px rgba(232,236,244,0.2)",
                 textShadow:
                   hovered === L.label
-                    ? "0 0 6px rgba(232,236,244,1), 0 0 16px rgba(232,236,244,0.9), 0 0 32px rgba(232,236,244,0.6)"
-                    : "0 0 4px rgba(232,236,244,0.7), 0 0 12px rgba(232,236,244,0.45)",
+                    ? "0 0 4px rgba(232,236,244,1), 0 0 12px rgba(232,236,244,0.7), 0 0 26px rgba(247, 247, 85, 0.4)"
+                    : "0 0 3px rgba(232,236,244,0.7), 0 0 10px rgba(231, 245, 157, 0.4)",
               }}
             >
               {L.label}

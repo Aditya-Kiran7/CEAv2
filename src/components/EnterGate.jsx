@@ -76,7 +76,7 @@ export const EnterGate = () => {
     const step = (t) => {
       const k = Math.min(1, (t - start) / duration);
 
-      video.volume = from + (to - from) * k;
+      video.volume = Math.min(1, Math.max(0, from + (to - from) * k));
 
       if (k < 1) {
         fadeRaf.current = requestAnimationFrame(step);
@@ -265,7 +265,7 @@ export const EnterGate = () => {
       const vid = videoRef.current;
 
       // ==========================================================
-      // 3 SECOND HOLD → AUTOPLAY
+      // 1 SECOND HOLD → AUTOPLAY
       // ==========================================================
       if (
         holdState.v &&
@@ -594,13 +594,13 @@ export const EnterGate = () => {
                 />
 
                 <p className="font-serif text-2xl font-light italic text-white/80">
-                  the story
+                  Insti Map??
                 </p>
 
                 <p className="mt-2 px-6 text-center text-[10px] uppercase tracking-[0.22em] text-white/40 sm:tracking-[0.35em]">
                   {autoPlaying
-                    ? "let it play"
-                    : "hold for a second"}
+                    ? "Woah.. Diving in the screen!!"
+                    : ".."}
                 </p>
               </div>
 
@@ -655,8 +655,8 @@ export const EnterGate = () => {
 
                 <p className="mt-3 text-[10px] uppercase tracking-[0.4em] text-white/45">
                   {autoPlaying
-                    ? "Playing · let the story unfold"
-                    : `Hold to enter · ${progress}%`}
+                    ? ""
+                    : `hold!! ${progress}%`}
                 </p>
               </div>
 
@@ -670,7 +670,7 @@ export const EnterGate = () => {
                 }
                 className="absolute bottom-6 right-4 rounded-full border border-white/15 px-5 py-2.5 text-[10px] uppercase tracking-[0.3em] text-white/40 transition-colors duration-300 hover:border-white/40 hover:text-white sm:bottom-10 sm:right-8 sm:px-6 sm:tracking-[0.35em]"
               >
-                Skip
+                SKIP
               </button>
             </motion.div>
           )}

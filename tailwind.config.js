@@ -11,6 +11,12 @@ module.exports = {
         serif: ['"Cormorant Garamond"', 'Georgia', 'serif'],
         sans: ['Manrope', 'ui-sans-serif', 'system-ui', 'sans-serif'],
       },
+      fontSize: {
+        xs: ['0.85rem', { lineHeight: '1.3rem' }],
+        sm: ['0.95rem', { lineHeight: '1.5rem' }],
+        base: ['1.125rem', { lineHeight: '1.75rem' }],
+        lg: ['1.25rem', { lineHeight: '1.9rem' }],
+      },
       borderRadius: {
         lg: 'var(--radius)',
         md: 'calc(var(--radius) - 2px)',

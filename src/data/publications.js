@@ -8,8 +8,8 @@
 export const PUBLICATIONS = [
   {
     id: "Insight 2026",
-    title: "Annual Magazine 2026",
-    blurb: "Moments become memories when spent with great people. We present the 6th edition of Civil Insight - Annual civil magazine, dedicated to precious gems of our Civil Engineering Department. A flashlight through all the major fun activities and events happened during the academic year 2026-27.",
+    title: "Annual Insight 2026",
+    blurb: "Moments become memories when spent with great people. We present the 6th edition of Civil Insight, Annual civil magazine, dedicated to precious gems of our Civil Engineering Department.",
     image: "/cea/pics/insights.jpg",
     link: "https://drive.google.com/file/d/1JD7yI6k5wv2siGy7unFk99X9PGpAgsZo/view?usp=sharing",
   },

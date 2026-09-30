@@ -10,10 +10,10 @@ export default function Blogs() {
         kicker="Field notes"
         title={
           <>
-            Blogs from <span className="italic text-white/60">the site office</span>
+            Blogs from <span className="italic text-white/60">the team</span>
           </>
         }
-        sub="Essays, site diaries and explainers written by students who would rather be outdoors."
+        sub="Essays, site diaries and explainers written by editors who would rather be outdoors."
       />
       <div className="mx-auto grid max-w-7xl gap-10 px-6 pb-32 md:grid-cols-2 lg:grid-cols-3 lg:px-12">
         {BLOGS.map((b, i) => (

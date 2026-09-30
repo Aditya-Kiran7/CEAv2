@@ -1,32 +1,64 @@
-@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400;1,500&family=Manrope:wght@200;300;400;500;600&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@200;300;400;500;600;700;800;900&display=swap');
 
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 :root {
-  --bg: #14110a;
+  
   --pink: #4f7fee;
-  --glow: #4a0d11;
+  --glow: #e8ecf4;
 }
 
+/* Solid fallback so nothing ever shows white/grey (overscroll, iOS toolbar gaps). */
 html {
-  background: var(--bg);
-  background: radial-gradient(ellipse 80% 60% at 50% 0%, #1a1815 0%, #0e0d0b 60%);
+  background-color: #0b3c9f;
+}
+
+/* Site background lives on a fixed layer instead of html + background-attachment: fixed.
+   iOS Safari ignores background-attachment: fixed, which made the gradient cover only the
+   first screen on mobile. A position: fixed element works on every browser. */
+body::before {
+  content: "";
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100vh;
+  height: 100lvh;
+  z-index: -1;
+  pointer-events: none;
+  background-image:
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.7' numOctaves='4' stitchTiles='stitch' result='noise'/%3E%3CfeColorMatrix in='noise' type='saturate' values='0'/%3E%3CfeComponentTransfer%3E%3CfeFuncR type='linear' slope='2.8' intercept='-0.8'/%3E%3CfeFuncG type='linear' slope='2.8' intercept='-0.8'/%3E%3CfeFuncB type='linear' slope='2.8' intercept='-0.8'/%3E%3CfeFuncA type='linear' slope='0.6' intercept='0'/%3E%3C/feComponentTransfer%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E"),
+    radial-gradient(ellipse 70% 65% at 50% 40%, #39598e 0%, #3559a7 35%, #0b3c9f 100%);
+  background-repeat: repeat, no-repeat;
+  background-size: 160px 160px, 100% 100%;
+  background-blend-mode: overlay, normal;
 }
 
 body {
   margin: 0;
-  font-family: 'Manrope', ui-sans-serif, system-ui, sans-serif;
+  font-family: 'JetBrains Mono', ui-monospace, monospace;
   background: transparent;
-  color: #fff;
+  color: #d4aef5;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   overflow-x: hidden;
 }
 
 .font-serif {
-  font-family: 'Cormorant Garamond', Georgia, serif;
+  font-family: 'JetBrains Mono', ui-monospace, monospace;
+}
+
+/* Opt-in class for the big/hero-level headings only — NOT applied automatically
+   to every heading. Add className="glow-heading" to the specific titles that
+   should be bold + cool-white neon (hero title, section titles, page headers). */
+.glow-heading {
+  font-weight: 800;
+  text-shadow:
+    0 0 2px rgba(255, 255, 255, 0.95),
+    0 0 6px rgba(232, 236, 244, 0.65),
+    0 0 14px rgba(232, 236, 244, 0.35);
 }
 
 ::selection {

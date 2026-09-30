@@ -54,7 +54,7 @@ export const Footer = () => (
               className="group flex items-center gap-3 rounded-full border border-white/15 px-6 py-3 text-xs uppercase tracking-[0.25em] text-white/75 transition-colors duration-300 hover:border-[#FFD1DC]/60 hover:text-white"
             >
               <ExternalLink size={14} />
-              Official — Civil, IIT Bombay
+              Official Civil, IIT Bombay Website
             </a>
           </div>
         </div>
@@ -62,7 +62,7 @@ export const Footer = () => (
 
       <div className="mt-20 flex flex-col gap-3 border-t border-white/5 pt-6 text-[10px] uppercase tracking-[0.3em] text-white/30 sm:flex-row sm:items-center sm:justify-between">
         <p>© 2026 {SITE.shortName} · {SITE.name}, {SITE.institute}</p>
-        <p>Built by the council · Est. {SITE.established}</p>
+        <p>Built by the Aditya Kiran Parasa</p>
       </div>
     </div>
   </footer>

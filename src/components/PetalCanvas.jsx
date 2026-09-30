@@ -57,36 +57,67 @@ export const PetalCanvas = () => {
     const petals = Array.from({ length: COUNT }, () => spawn(true));
 
     const drawPetal = (p) => {
-      ctx.save();
-      ctx.translate(p.x, p.y);
+  ctx.save();
+  ctx.translate(p.x, p.y);
 
-      if (p.glow > 0.02) {
-        const r = p.size * (3 + p.glow * 3);
-        const halo = ctx.createRadialGradient(0, 0, 0, 0, 0, r);
-        halo.addColorStop(0, `rgba(255, 205, 70, ${0.5 * p.glow})`);
-        halo.addColorStop(0.5, `rgba(255, 230, 170, ${0.18 * p.glow})`);
-        halo.addColorStop(1, "rgba(255, 230, 170, 0)");
-        ctx.fillStyle = halo;
-        ctx.beginPath();
-        ctx.arc(0, 0, r, 0, Math.PI * 2);
-        ctx.fill();
-      }
+  if (p.glow > 0.02) {
+    const r = p.size * (3 + p.glow * 3);
+    const halo = ctx.createRadialGradient(0, 0, 0, 0, 0, r);
 
-      ctx.rotate(p.rot);
-      const s = p.size;
-      const boost = 1 + p.glow * 0.9;
-      const g = ctx.createLinearGradient(0, -s, 0, s);
-      g.addColorStop(0, `rgba(255, 205, 70, ${Math.min(1, p.alpha * boost)})`);
-      g.addColorStop(1, `rgba(255, 248, 230, ${Math.min(1, p.alpha * 0.8 * boost)})`);
-      ctx.fillStyle = g;
-      ctx.beginPath();
-      ctx.moveTo(0, -s);
-      ctx.bezierCurveTo(s * 0.9, -s * 0.7, s * 0.9, s * 0.5, 0, s);
-      ctx.bezierCurveTo(-s * 0.9, s * 0.5, -s * 0.9, -s * 0.7, 0, s);
-      ctx.closePath();
-      ctx.fill();
-      ctx.restore();
-    };
+    halo.addColorStop(0, `rgba(80, 255, 140, ${0.5 * p.glow})`);
+    halo.addColorStop(0.5, `rgba(150, 255, 190, ${0.18 * p.glow})`);
+    halo.addColorStop(1, "rgba(150, 255, 190, 0)");
+
+    ctx.fillStyle = halo;
+    ctx.beginPath();
+    ctx.arc(0, 0, r, 0, Math.PI * 2);
+    ctx.fill();
+  }
+
+  ctx.rotate(p.rot);
+  const s = p.size;
+  const boost = 1 + p.glow * 0.9;
+
+  const g = ctx.createLinearGradient(0, -s, 0, s);
+
+  g.addColorStop(
+    0,
+    `rgba(70, 220, 110, ${Math.min(1, p.alpha * boost)})`
+  );
+
+  g.addColorStop(
+    1,
+    `rgba(220, 255, 230, ${Math.min(
+      1,
+      p.alpha * 0.8 * boost
+    )})`
+  );
+
+  ctx.fillStyle = g;
+
+  ctx.beginPath();
+  ctx.moveTo(0, -s);
+  ctx.bezierCurveTo(
+    s * 0.9,
+    -s * 0.7,
+    s * 0.9,
+    s * 0.5,
+    0,
+    s
+  );
+  ctx.bezierCurveTo(
+    -s * 0.9,
+    s * 0.5,
+    -s * 0.9,
+    -s * 0.7,
+    0,
+    s
+  );
+  ctx.closePath();
+  ctx.fill();
+
+  ctx.restore();
+};
 
     let t = 0;
     const tick = () => {

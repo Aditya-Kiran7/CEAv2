@@ -6,12 +6,12 @@
 // `span` controls the bento layout (keep a mix for asymmetry).
 // ============================================================
 export const GALLERY = [
-  { id: 1, caption: "Convocation 26", image: "/assets/gallery/1.jpg", span: "md:col-span-2 md:row-span-2" },
-  { id: 2, caption: "Orientation 2026", image: "/assets/gallery/2.jpg", span: "" },
-  { id: 3, caption: "Orientation 2026", image: "/assets/gallery/3.jpg", span: "" },
-  { id: 4, caption: "Trad Day 2026", image: "/assets/gallery/4.jpg", span: "md:col-span-2" },
-  { id: 5, caption: "Orientation 2026", image: "/assets/gallery/5.jpg", span: "" },
-  { id: 6, caption: "Convocation '25 batch", image: "/assets/gallery/6.jpg", span: "" },
-  { id: 7, caption: "Freshers' Night 2025", image: "/assets/gallery/7.jpg", span: "md:col-span-2" },
-  { id: 8, caption: "Convocation of '26 batch", image: "/assets/gallery/convo26.jpg", span: "" },
+  { id: 1, caption: "Convocation 26", image: "/cea/pics/convo26.jpeg", span: "md:col-span-2 md:row-span-2" },
+  { id: 2, caption: "Orientation 2026", image: "/cea/pics/oreo26freshie.jpg", span: "" },
+  { id: 3, caption: "Orientation 2026", image: "/cea/pics/oreo26_2.jpg", span: "" },
+  { id: 4, caption: "Trad Day 2026", image: "/cea/pics/trad26.JPG", span: "md:col-span-2" },
+  { id: 5, caption: "Orientation 2026", image: "/cea/pics/oreo26_3.jpg", span: "" },
+  { id: 6, caption: "Teachers' Day 2026", image: "/cea/pics/teachers26.jpg", span: "" },
+  { id: 7, caption: "Treasure Hunt 2025", image: "/cea/pics/TH25.jpeg", span: "md:col-span-2" },
+  { id: 8, caption: "Orientation 2026", image: "/cea/pics/oreo26_4.jpg", span: "" },
 ];

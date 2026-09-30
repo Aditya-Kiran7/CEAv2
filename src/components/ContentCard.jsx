@@ -17,7 +17,7 @@ export const ContentCard = ({ item, index, prefix, aspect = "aspect-[4/3]", labe
             e.currentTarget.onerror = null;
             if (item.imageFallback) e.currentTarget.src = item.imageFallback;
           }}
-          className="h-full w-full object-cover grayscale transition-[transform,filter] duration-700 ease-out group-hover:scale-105 group-hover:grayscale-0"
+          className="h-full w-full object-cover transition-transform duration-700 ease-out group-hover:scale-105"
         />
         <span className="absolute left-4 top-4 rounded-full border border-white/20 bg-black/30 px-3 py-1 text-[10px] uppercase tracking-[0.25em] text-white/80 backdrop-blur-md">
           {label || `${String(index + 1).padStart(2, "0")}`}
