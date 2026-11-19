@@ -1242,6 +1242,12 @@ const certificates = [
     date: '15 August 2026',
   },
   {
+    id: 'CEA26-MS0069',
+    name: 'Ganpat Ram',
+    event: 'MS',
+    date: '15 August 2026',
+  },
+  {
     id: 'CEA26-QG0001',
     name: 'Abhishek Dushyantbhai Bhatt',
     event: 'QGIS',
@@ -1466,6 +1472,18 @@ const certificates = [
   {
     id: 'CEA26-QG0038',
     name: 'Yash Agrawal',
+    event: 'QGIS',
+    date: '15 August 2026',
+  },
+  {
+    id: 'CEA26-QG0039',
+    name: 'Ganpat Ram',
+    event: 'QGIS',
+    date: '15 August 2026',
+  },
+  {
+    id: 'CEA26-QG0040',
+    name: 'Abbas Madarwala',
     event: 'QGIS',
     date: '15 August 2026',
   },

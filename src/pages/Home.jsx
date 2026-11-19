@@ -41,7 +41,7 @@ export default function Home() {
         />
         <div className="mx-auto w-full max-w-7xl">
           <Reveal play={entered} whoosh={false}>
-            <p className="flex items-center gap-4 text-[11px] uppercase tracking-[0.4em] text-white/40">
+            <p className="flex items-center gap-4 text-[11px] uppercase tracking-[0.4em] text-white/85 glow-text">
               <span className="h-px w-10 bg-[#FFD1DC]/60" />
               Est. {SITE.established} · {SITE.institute}
             </p>
@@ -63,7 +63,7 @@ export default function Home() {
           </h1>
           <div className="mt-12">
             <Reveal play={entered} delay={0.55} whoosh={false}>
-              <p className="max-w-md text-base font-light leading-relaxed text-white/50">
+              <p className="max-w-md text-base font-light leading-relaxed text-white/90 glow-text">
                 {SITE.tagline}, the student civil engineering body of IIT Bombay,
                 building since {SITE.established}.
               </p>
@@ -92,7 +92,7 @@ export default function Home() {
         <div className="lg:col-span-5">
           <div className="lg:sticky lg:top-32">
             <Reveal whoosh={false}>
-              <p className="flex items-center gap-4 text-[11px] uppercase tracking-[0.4em] text-white/40">
+              <p className="flex items-center gap-4 text-[11px] uppercase tracking-[0.4em] text-white/85 glow-text">
                 <span className="h-px w-10 bg-white/25" /> About
               </p>
             </Reveal>
@@ -106,7 +106,7 @@ export default function Home() {
               </h2>
             </Reveal>
             <Reveal delay={0.16} whoosh={false}>
-              <p className="mt-8 max-w-sm text-base font-light leading-relaxed text-white/50">
+              <p className="mt-8 max-w-sm text-base font-light leading-relaxed text-white/90 glow-text">
                 A manifesto in three chapters, who we are, what we do, and why
                 any of it matters.
               </p>
@@ -130,7 +130,7 @@ export default function Home() {
                 </h3>
               </Reveal>
               <Reveal delay={0.14} whoosh={false}>
-                <p className="mt-5 max-w-lg text-base font-light leading-relaxed text-white/55">
+                <p className="mt-5 max-w-lg text-base font-light leading-relaxed text-white/90 glow-text">
                   {c.text}
                 </p>
               </Reveal>

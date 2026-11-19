@@ -11,7 +11,7 @@ export const GALLERY = [
   { id: 3, caption: "Orientation 2026", image: "/cea/pics/oreo26_2.jpg", span: "" },
   { id: 4, caption: "Trad Day 2026", image: "/cea/pics/trad26.JPG", span: "md:col-span-2" },
   { id: 5, caption: "Orientation 2026", image: "/cea/pics/oreo26_3.jpg", span: "" },
-  { id: 6, caption: "Teachers' Day 2026", image: "/cea/pics/teachers26.jpg", span: "" },
+  { id: 6, caption: "Teachers' Day 2026", image: "/cea/pics/teachersd26.jpg", span: "" },
   { id: 7, caption: "Treasure Hunt 2025", image: "/cea/pics/TH25.jpeg", span: "md:col-span-2" },
   { id: 8, caption: "Orientation 2026", image: "/cea/pics/oreo26_4.jpg", span: "" },
 ];

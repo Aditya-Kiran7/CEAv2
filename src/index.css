@@ -61,6 +61,102 @@ body {
     0 0 14px rgba(232, 236, 244, 0.35);
 }
 
+/* Small body text / labels: brighter with a soft, subtle shine.
+   Add className="glow-text" to any small text that should pop. */
+.glow-text {
+  text-shadow:
+    0 0 1px rgba(255, 255, 255, 0.55),
+    0 0 8px rgba(232, 236, 244, 0.35);
+}
+
+/* Site-wide: every dim small-text utility (text-white/30 … /60) on body-level text
+   (p, a, li, span, figcaption, label) gets brighter with a soft shine, on ALL pages,
+   without editing each component. Text inside headings (h1–h4) is left alone so the
+   big-title hierarchy (e.g. the dimmer italic words) stays as designed. Hover colours
+   still work because hover utilities have higher specificity. */
+:where(p, a, li, span, figcaption, label, time, small):not(h1 *, h2 *, h3 *, h4 *):is(
+    [class*="text-white/30"],
+    [class*="text-white/35"],
+    [class*="text-white/40"],
+    [class*="text-white/45"],
+    [class*="text-white/50"],
+    [class*="text-white/55"],
+    [class*="text-white/60"]
+  ) {
+  color: rgba(255, 255, 255, 0.86);
+  text-shadow:
+    0 0 1px rgba(255, 255, 255, 0.55),
+    0 0 8px rgba(232, 236, 244, 0.35);
+}
+
+/* Site-wide font-size boost for the same small text (dim white labels, captions, nav,
+   card details) on every page. Sizes are one-to-one, so the hierarchy stays: the tiniest
+   labels stay the smallest. Tune the numbers here, nothing else needs editing.
+   Order matters: if an element has both a mobile and a desktop size class (e.g.
+   text-[9px] sm:text-[10px]) the later rule below wins on all screen sizes. */
+:root {
+  --fs-9: 12px;   /* was 9px  */
+  --fs-10: 13px;  /* was 10px */
+  --fs-11: 14px;  /* was 11px */
+  --fs-xs: 14px;  /* was 12px (text-xs) */
+  --fs-sm: 16px;  /* was 14px (text-sm) */
+}
+:where(p, a, li, span, figcaption, label, time, small):not(h1 *, h2 *, h3 *, h4 *):is(
+    [class*="text-white/30"],
+    [class*="text-white/35"],
+    [class*="text-white/40"],
+    [class*="text-white/45"],
+    [class*="text-white/50"],
+    [class*="text-white/55"],
+    [class*="text-white/60"]
+  ):is([class*="text-[9px]"]) {
+  font-size: var(--fs-9);
+}
+:where(p, a, li, span, figcaption, label, time, small):not(h1 *, h2 *, h3 *, h4 *):is(
+    [class*="text-white/30"],
+    [class*="text-white/35"],
+    [class*="text-white/40"],
+    [class*="text-white/45"],
+    [class*="text-white/50"],
+    [class*="text-white/55"],
+    [class*="text-white/60"]
+  ):is([class*="text-[10px]"]) {
+  font-size: var(--fs-10);
+}
+:where(p, a, li, span, figcaption, label, time, small):not(h1 *, h2 *, h3 *, h4 *):is(
+    [class*="text-white/30"],
+    [class*="text-white/35"],
+    [class*="text-white/40"],
+    [class*="text-white/45"],
+    [class*="text-white/50"],
+    [class*="text-white/55"],
+    [class*="text-white/60"]
+  ):is([class*="text-[11px]"]) {
+  font-size: var(--fs-11);
+}
+:where(p, a, li, span, figcaption, label, time, small):not(h1 *, h2 *, h3 *, h4 *):is(
+    [class*="text-white/30"],
+    [class*="text-white/35"],
+    [class*="text-white/40"],
+    [class*="text-white/45"],
+    [class*="text-white/50"],
+    [class*="text-white/55"],
+    [class*="text-white/60"]
+  ):is([class*="text-xs"]) {
+  font-size: var(--fs-xs);
+}
+:where(p, a, li, span, figcaption, label, time, small):not(h1 *, h2 *, h3 *, h4 *):is(
+    [class*="text-white/30"],
+    [class*="text-white/35"],
+    [class*="text-white/40"],
+    [class*="text-white/45"],
+    [class*="text-white/50"],
+    [class*="text-white/55"],
+    [class*="text-white/60"]
+  ):is([class*="text-sm"]) {
+  font-size: var(--fs-sm);
+}
+
 ::selection {
   background: rgba(255, 209, 220, 0.25);
   color: #fff;
